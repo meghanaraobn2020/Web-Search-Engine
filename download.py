@@ -33,8 +33,8 @@ def retrieve_text(topic):
         data_flag = False
 
     try:
-        #if data_flag == False:
-        #    raise Exception("")
+        if data_flag == False:
+            raise Exception("")
         num_image_config = {
             'action': 'parse',
             'pageid': text_page['pageid'],
@@ -43,7 +43,7 @@ def retrieve_text(topic):
         }
         num_image_response = requests.get('https://en.wikipedia.org/w/api.php', params=num_image_config).json()
 
-        # now that we havae the number of images in the page, we ask for the images that are in the page with the title
+        # now that we have the number of images in the page, we ask for the images that are in the page with the title
         image_config = {
             'action': 'query',
             'format': 'json',
@@ -54,9 +54,9 @@ def retrieve_text(topic):
         image_response = requests.get('https://en.wikipedia.org/w/api.php', params=image_config).json()
         image_page = next(iter(image_response['query']['pages'].values()))
 
-        # and we  write the image files one by one in the currect directory
-        # we also dont write the svg files, since as they are mostly the logos
-        # modily the filename_pattern regex for to accept the proper files
+        # and we  write the image files one by one in the current directory
+        # we also do not write the svg files, since as they are mostly the logos
+        # modify the filename_pattern regex for to accept the proper files
 
         #print(image_page)
         filename_pattern = re.compile(".*\.(?:jpe?g|gif|png|JPE?G|GIF|PNG)")
@@ -117,8 +117,8 @@ def FNameparser(path, start, end):
 def main():
     # path = "Wikipedia_topics.txt"
     path = "Wikipedia_topics"
-    start = 300
-    end = 310 #311
+    start = 20
+    end = 30 #311
     orig, Namelist = FNameparser(path, start, end)
     print(orig)
     print(Namelist)
