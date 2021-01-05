@@ -117,8 +117,8 @@ def FNameparser(path, start, end):
 def main():
     # path = "Wikipedia_topics.txt"
     path = "Wikipedia_topics"
-    start = 20
-    end = 30 #311
+    start = 10
+    end = 410 #311
     orig, Namelist = FNameparser(path, start, end)
     print(orig)
     print(Namelist)
@@ -144,6 +144,7 @@ def main():
         print("###################################")
     print("\n Document Searched:", i)
     print("Document Downloaded:", correct)
+    print("End Index:",end)
 
 if __name__ == '__main__':
     main()
