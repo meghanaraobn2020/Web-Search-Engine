@@ -1,11 +1,13 @@
 import requests
 import re
+import os
 
 
 def retrieve_text(topic):
     # this is the config for to get the first introduction of a title
     data_flag = True
     image_flag = True
+    inp_filename = ""
     try:
         text_config = {
             'action': 'query',
@@ -18,12 +20,13 @@ def retrieve_text(topic):
         text_response = requests.get('https://en.wikipedia.org/w/api.php', params=text_config).json()
         text_page = next(iter(text_response['query']['pages'].values()))
 
-        #print(text_page)
+        # print(text_page)
         if text_page['extract'] == '':
-            #data_flag = False
+            # data_flag = False
             raise Exception("No data available for download")
 
-        print("Writing Document...")
+        print("Starting to write Document...")
+        inp_filename = "../Dataset/" + text_page['title'] + ".txt"
         file1 = open("../Dataset/" + text_page['title'] + ".txt", "w", encoding="utf-8")  # write mode
         temp = text_page['extract']  # .strip(u\u200b)
         file1.write(temp)
@@ -43,7 +46,7 @@ def retrieve_text(topic):
         }
         num_image_response = requests.get('https://en.wikipedia.org/w/api.php', params=num_image_config).json()
 
-        # now that we have the number of images in the page, we ask for the images that are in the page with the title
+        # now that we havae the number of images in the page, we ask for the images that are in the page with the title
         image_config = {
             'action': 'query',
             'format': 'json',
@@ -54,14 +57,14 @@ def retrieve_text(topic):
         image_response = requests.get('https://en.wikipedia.org/w/api.php', params=image_config).json()
         image_page = next(iter(image_response['query']['pages'].values()))
 
-        # and we  write the image files one by one in the current directory
-        # we also do not write the svg files, since as they are mostly the logos
-        # modify the filename_pattern regex for to accept the proper files
+        # and we  write the image files one by one in the currect directory
+        # we also dont write the svg files, since as they are mostly the logos
+        # modily the filename_pattern regex for to accept the proper files
 
-        #print(image_page)
+        # print(image_page)
         filename_pattern = re.compile(".*\.(?:jpe?g|gif|png|JPE?G|GIF|PNG)")
 
-        print("Writing Images...")
+        print("Starting to write Images...")
         for i in range(len(image_page['images'])):
 
             url_config = {
@@ -74,7 +77,11 @@ def retrieve_text(topic):
             url_response = requests.get('https://en.wikipedia.org/w/api.php', params=url_config).json()
             url_page = next(iter(url_response['query']['pages'].values()))
             print(url_page['imageinfo'][0]['url'])
-            if (filename_pattern.search(url_page['imageinfo'][0]['url'])):
+            temp = str(url_page['imageinfo'][0]['url'])
+            if temp.endswith('.svg'):
+                print("SVG image")
+                raise Exception("")
+            if filename_pattern.search(url_page['imageinfo'][0]['url']):
 
                 print("writing image " + url_page['imageinfo'][0]['url'].rsplit("/", 1)[1])
                 with open("../Dataset/" + url_page['imageinfo'][0]['url'].rsplit("/", 1)[1], 'wb') as handle:
@@ -92,8 +99,16 @@ def retrieve_text(topic):
     except:
         print("No image to download")
         image_flag = False
+    if image_flag == False and data_flag == True:
+        if os.path.exists(inp_filename):
+            os.remove(inp_filename)
+            print("File remoed :", inp_filename)
+        else:
+            print("The file does not exist")
+        return False
 
-    if image_flag == False or data_flag == False: return False
+    if image_flag == False or data_flag == False:
+        return False
 
     return True
 
@@ -117,8 +132,8 @@ def FNameparser(path, start, end):
 def main():
     # path = "Wikipedia_topics.txt"
     path = "Wikipedia_topics"
-    start = 10
-    end = 410 #311
+    start = 301
+    end = 302  # 311
     orig, Namelist = FNameparser(path, start, end)
     print(orig)
     print(Namelist)
@@ -144,7 +159,7 @@ def main():
         print("###################################")
     print("\n Document Searched:", i)
     print("Document Downloaded:", correct)
-    print("End Index:",end)
+
 
 if __name__ == '__main__':
     main()
