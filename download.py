@@ -127,8 +127,8 @@ def FNameparser(path, start, end):
 
 def main():
     path = "Wikipedia_topics"
-    start = 3000
-    end = 8000  # 311
+    start = 1000
+    end = 25000  # 311
     orig, Namelist = FNameparser(path, start, end)
     print(orig)
     print(Namelist)
@@ -154,9 +154,9 @@ def main():
             print("Skipping the current topic")
             end = end + 1
             Namelist.pop(index)
-            _, temp = FNameparser(path, end, end + 1)
-            print("Searching another topic")
-            Namelist.append(temp[0])
+           # _, temp = FNameparser(path, end, end + 1)
+           # print("Searching another topic")
+            #Namelist.append(temp[0])
             executions += 1
         i += 1
 
