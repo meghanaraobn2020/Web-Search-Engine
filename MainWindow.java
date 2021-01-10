@@ -1,18 +1,16 @@
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainWindow {
 
-	protected Shell shell;
+	//protected Shell shell;
 	
     public static HashMap<Integer, ArrayList<String>> dictionary ;
 	
@@ -41,8 +39,9 @@ public class MainWindow {
 
 	public static void main(String[] args) {
 		
-		String inputPath = "C:\\Users\\Prasad\\Desktop\\MeghanaOVGU Assignments\\Winter_2020\\Information Retrieval\\Programming\\IR_Proj06\\Documents";
-	    String indexPath = "C:\\Users\\Prasad\\Desktop\\MeghanaOVGU Assignments\\Winter_2020\\Information Retrieval\\Programming\\IR_Proj06\\Index";
+		String inputPath = "Dataset";
+		//check whether the Dataset exist and give error message
+	    String indexPath = "Index";
 	    Indexing.indexing(inputPath, indexPath);
 
 		f=new JFrame();
@@ -63,17 +62,16 @@ public class MainWindow {
 
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-		   
 	        String queryInput = searchField.getText();
-	        
+	        System.out.println("before search");
 	        dictionary = null;
 	        try {
 	        	dictionary = SearchIndex.searching(indexPath, queryInput);
+	        	System.out.println("After search");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-				
+			}			
 			
 	             p.removeAll();
 			
@@ -82,7 +80,7 @@ public class MainWindow {
 
 				 int count = 0; 
 
-				
+				System.out.println("After search");
 				  for (ArrayList<String> val : dictionary.values()) {  
   
 					        jpanel[count] = new JPanel();
@@ -125,6 +123,15 @@ public class MainWindow {
 							  
 							String htmlTxt = "<html>"+val.get(4)+"</html>";
 							editorPane[count].setText(htmlTxt);
+							
+							try {
+								BufferedImage image = ImageIO.read(new File(val.get(5)));
+							    JLabel label = new JLabel(new ImageIcon(image));
+							    p.add(label);
+							}catch(Exception e) {
+								
+							}		
+							
 				
 							p.revalidate();
 							p.repaint();

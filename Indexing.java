@@ -23,8 +23,9 @@ import java.text.SimpleDateFormat;
 
 public class Indexing {
 	public static void indexing(String inputPath, String indexPath) {
-
+		System.out.println("Before path");
 		final Path dataDir = Paths.get(inputPath);
+		System.out.println("path:"+dataDir.toString());
 		Date start = new Date();
 		try {
 			Directory index = FSDirectory.open(Paths.get(indexPath));
