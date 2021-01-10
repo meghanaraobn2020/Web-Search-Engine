@@ -28,7 +28,13 @@ def retrieve_text(topic):
             raise Exception("No data available for download")
 
         print("Starting to write Document...")
-        inp_filename = "../Dataset/" + text_page['title'] + ".txt"
+        inp_filename_ext = "../Dataset/" + text_page['title'] + ".txt"
+        inp_filename = "../Dataset/" + text_page['title']
+
+        if os.path.exists(inp_filename_ext) or os.path.exists(inp_filename):
+            print("Duplicate Entry")
+            raise Exception("")
+
         file1 = open("../Dataset/" + text_page['title'] + ".txt", "w", encoding="utf-8")  # write mode
         temp = text_page['extract']  # .strip(u\u200b)
         file1.write(temp)
@@ -62,7 +68,6 @@ def retrieve_text(topic):
         # print(image_page)
         filename_pattern = re.compile(".*\.(?:jpe?g|gif|png|JPE?G|GIF|PNG)")
 
-
         for i in range(len(image_page['images'])):
 
             url_config = {
@@ -78,7 +83,8 @@ def retrieve_text(topic):
             if filename_pattern.search(url_page['imageinfo'][0]['url']) and (counter == 0):
                 print("Starting to write Images...")
                 counter = counter + 1
-                temp = inp_filename.rsplit(".", 1)[0] + "." + (url_page['imageinfo'][0]['url'].rsplit("/", 1)[1]).rsplit(".", 1)[1];
+                temp = inp_filename_ext.rsplit(".", 1)[0] + "." + \
+                       (url_page['imageinfo'][0]['url'].rsplit("/", 1)[1]).rsplit(".", 1)[1];
                 print("Image File Name: ", temp)
                 with open(temp, 'wb') as handle:
                     response = requests.get(url_page['imageinfo'][0]['url'], stream=True)
@@ -96,17 +102,20 @@ def retrieve_text(topic):
         print("No image to download")
         image_flag = False
     if (image_flag == False and data_flag == True) or (data_flag == True and counter == 0):
-        if os.path.exists(inp_filename):
+        if os.path.exists(inp_filename_ext):
+            os.remove(inp_filename_ext)
+            print("File removed :", inp_filename_ext)
+        elif os.path.exists(inp_filename):
             os.remove(inp_filename)
             print("File removed :", inp_filename)
         else:
             print("The file does not exist")
-        return False
+        return False, None, None
 
     if image_flag == False or data_flag == False:
-        return False
+        return False, None, None
 
-    return True
+    return True, inp_filename_ext, inp_filename
 
 
 def FNameparser(path, start, end):
@@ -116,7 +125,7 @@ def FNameparser(path, start, end):
         lines = [x.decode('utf8').strip() for x in f.readlines()]
         for i in range(start, end):
             l = list(lines[i])
-            l = [e for e in l if e not in ('!', ',', '(', ')', '"')]
+            l = [e for e in l if e not in ('!', ',', '(', ')', '"', ':')]
             op_str = ''.join(l)
             op_str = re.sub(r"(?i)^[^a-z\d()]*|[^a-z\d()]+$", "", op_str)
             # str = str
@@ -127,43 +136,53 @@ def FNameparser(path, start, end):
 
 def main():
     path = "Wikipedia_topics"
-    start = 1000
+    start = 10
     end = 25000  # 311
-    orig, Namelist = FNameparser(path, start, end)
-    print(orig)
-    print(Namelist)
+    _, Namelist = FNameparser(path, start, end)
+    # print(orig)
+    # print(Namelist)
     executions = len(Namelist)
     i = 1
     correct = 0
-    total_executions = 1000 #Change it to 1000
+    total_executions = 1000  # Change it to 1000
     systemRandom = random.SystemRandom()
     while correct < total_executions:
-        index = systemRandom.randint(0, len(Namelist)-1)
+        index = systemRandom.randint(0, len(Namelist) - 1)
         print("\n###################################")
         print("Execution Number: ", i)
         print("Topics Downloaded: ", correct)
         print("Current Index: ", index)
-        print("Downloading for Topic:", Namelist[index])
+        print("Available topics for searching: ", len(Namelist))
+        print("Searching for Topic:", Namelist[index])
         topic = str(Namelist[index])
         topic = topic.strip()
-        if retrieve_text(topic):
-            Namelist.pop(index)
-            print("Download Complete")
-            correct += 1
+        check, fname, fname_pth = retrieve_text(topic)
+        if check:
+            if (os.path.exists(fname) and (os.path.exists(fname_pth + ".jpg")
+                                           or os.path.exists(fname_pth + ".JPG")
+                                           or os.path.exists(fname_pth + ".PNG")
+                                           or os.path.exists(fname_pth + ".png")
+                                           or os.path.exists(fname_pth + ".gif"))):
+                Namelist.pop(index)
+                print("Download Complete")
+                correct += 1
         else:
             print("Skipping the current topic")
-            end = end + 1
             Namelist.pop(index)
-           # _, temp = FNameparser(path, end, end + 1)
-           # print("Searching another topic")
-            #Namelist.append(temp[0])
-            executions += 1
+            if len(Namelist) < 10:
+                _, temp = FNameparser(path, end + 1, end + 10)
+                print("Adding more topics")
+                Namelist.extend(temp)
+                end = end + 11
+
+
         i += 1
 
         print("###################################")
     print("\n Document Searched:", i)
-    print("Document Downloaded:", correct)
-    print("End Index", end)
+    print(" Document Downloaded:", correct)
+    print(" Start Index", start)
+    print(" End Index", end)
 
 
 if __name__ == '__main__':
