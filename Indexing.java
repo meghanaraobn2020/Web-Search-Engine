@@ -1,7 +1,4 @@
-
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,14 +15,13 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.jsoup.Jsoup;
 import java.text.SimpleDateFormat;
 
 public class Indexing {
 	public static void indexing(String inputPath, String indexPath) {
-		System.out.println("Before path");
+//		System.out.println("Before path");
 		final Path dataDir = Paths.get(inputPath);
-		System.out.println("path:"+dataDir.toString());
+//		System.out.println("path:"+dataDir.toString());
 		Date start = new Date();
 		try {
 			Directory index = FSDirectory.open(Paths.get(indexPath));
@@ -39,14 +35,13 @@ public class Indexing {
 			indexWriter.close();
 
 			Date end = new Date();
-			System.out.println(end.getTime() - start.getTime() + " total milliseconds");
+//			System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 		} catch (IOException e) {
 			System.out.println("Error in Indexing Class");
 			System.out.println("Error in Search Query");
 			// e.printStackTrace();
 			// System.out.println(e.getMessage());
 		}
-
 	}
 
 	public static void indexDirectory(final IndexWriter indexWriter, Path dataDir) throws IOException {
@@ -55,8 +50,7 @@ public class Indexing {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					String fileLowerCaseName = file.toString().toLowerCase();
-					if (fileLowerCaseName.endsWith(".txt") || fileLowerCaseName.endsWith(".html")
-							|| fileLowerCaseName.endsWith(".htm")) {
+					if (fileLowerCaseName.endsWith(".txt")) {
 						try {
 							indexDocument(indexWriter, file, attrs.lastModifiedTime().toMillis());
 						} catch (IOException ignore) {
@@ -77,28 +71,16 @@ public class Indexing {
 	public static void indexDocument(IndexWriter writer, Path dataDir, long lastModified) throws IOException {
 		try (InputStream stream = Files.newInputStream(dataDir)) {
 			Document doc = new Document();
-			
-			String file;
 
-			String fileLowerCaseName = dataDir.toString().toLowerCase();
-			if (fileLowerCaseName.endsWith(".htm") || fileLowerCaseName.endsWith(".html")) {
-				file = new String(Files.readAllBytes(dataDir));
-				org.jsoup.nodes.Document jSoupdoc = Jsoup.parse(file, "UTF-8");
-				String title = String.valueOf(jSoupdoc.title());
-				doc.add(new StringField("title", title, Field.Store.YES));
-				String summary = String.valueOf(jSoupdoc.select("summary").text());
-				doc.add(new StringField("summary", summary, Field.Store.YES));
-			}
 			try {
 				Field pathField = new StringField("path", dataDir.toString(), Field.Store.YES);
 				doc.add(pathField);
 
 				String lastMod = new SimpleDateFormat("dd MMM yyyy HH:mm:ss ").format(lastModified);
 				doc.add(new StringField("lastmodified", lastMod, Field.Store.YES));
-				//doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))));
 				doc.add(new TextField("contents", new String(Files.readAllBytes(dataDir)) , Store.YES));
 
-				System.out.println("adding " + dataDir);
+//				System.out.println("adding " + dataDir);
 				writer.addDocument(doc);
 			} catch (Exception e) {
 				System.out.println("Error in Indexing Class - in indexDocument module");
