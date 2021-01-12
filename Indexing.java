@@ -18,8 +18,9 @@ import org.apache.lucene.store.FSDirectory;
 import java.text.SimpleDateFormat;
 
 public class Indexing {
-	public static void indexing(String inputPath, String indexPath) {
+	public static boolean indexing(String inputPath, String indexPath) {
 //		System.out.println("Before path");
+		boolean flag = true;
 		final Path dataDir = Paths.get(inputPath);
 //		System.out.println("path:"+dataDir.toString());
 		Date start = new Date();
@@ -37,11 +38,13 @@ public class Indexing {
 			Date end = new Date();
 //			System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 		} catch (IOException e) {
+			flag = false;
 			System.out.println("Error in Indexing Class");
 			System.out.println("Error in Search Query");
 			// e.printStackTrace();
-			// System.out.println(e.getMessage());
+			 System.out.println(e.getMessage());
 		}
+		return flag; 
 	}
 
 	public static void indexDirectory(final IndexWriter indexWriter, Path dataDir) throws IOException {
