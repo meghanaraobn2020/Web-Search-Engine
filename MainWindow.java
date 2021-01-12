@@ -1,5 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -43,6 +45,7 @@ public class MainWindow extends JDialog {
         f.getContentPane().setLayout(null);
 
         p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
         p.setBounds(10, 109, 964, 613);
         f.getContentPane().add(p);
 
@@ -72,53 +75,56 @@ public class MainWindow extends JDialog {
                 for (ArrayList<String> val : dictionary.values()) {
 
                     jpanel[count] = new JPanel();
+                    //jpanel[count].setLayout(null);
                     rankLbl[count] = new JLabel("Rank:");
-                    p.add(rankLbl[count]);
+                    jpanel[count].add(rankLbl[count]);
 
                     rankTF[count] = new JTextField();
-                    p.add(rankTF[count]);
+                    jpanel[count].add(rankTF[count]);
                     rankTF[count].setText(val.get(0));
 
                     pathLbl[count] = new JLabel("Path:");
-                    p.add(pathLbl[count]);
+                    jpanel[count].add(pathLbl[count]);
 
                     pathTF[count] = new JTextField();
-                    p.add(pathTF[count]);
+                    jpanel[count].add(pathTF[count]);
                     pathTF[count].setText(val.get(1));
 
 
                     lastModifiedLbl[count] = new JLabel("Last Modified:");
-                    p.add(lastModifiedLbl[count]);
+                    jpanel[count].add(lastModifiedLbl[count]);
 
                     lastModifiedTF[count] = new JTextField();
-                    p.add(lastModifiedTF[count]);
+                    jpanel[count].add(lastModifiedTF[count]);
                     lastModifiedTF[count].setText(val.get(2));
 
                     scoreLbl[count] = new JLabel("Score:");
-                    p.add(scoreLbl[count]);
+                    jpanel[count].add(scoreLbl[count]);
 
                     scoreTF[count] = new JTextField();
-                    p.add(scoreTF[count]);
+                    jpanel[count].add(scoreTF[count]);
                     scoreTF[count].setText(val.get(3));
 
                     highltedTxtLbl[count] = new JLabel("Text:");
-                    p.add(highltedTxtLbl[count]);
+                    jpanel[count].add(highltedTxtLbl[count]);
 
 
                     editorPane[count] = new JEditorPane();
                     editorPane[count].setContentType("text/html");
-                    p.add(editorPane[count]);
+                    jpanel[count].add(editorPane[count]);
 
                     String htmlTxt = "<html>"+val.get(4)+"</html>";
                     editorPane[count].setText(htmlTxt);
 
                     try {
                         BufferedImage image = ImageIO.read(new File(val.get(5)));
-                        JLabel label = new JLabel(new ImageIcon(image));
-                        p.add(label);
+                        Image newimg = image.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+						JLabel label = new JLabel(new ImageIcon(newimg));
+						jpanel[count].add(label);
                     }catch(Exception e) {
 
                     }
+                    p.add(jpanel[count]);
                     p.revalidate();
                     p.repaint();
                     f.revalidate();
