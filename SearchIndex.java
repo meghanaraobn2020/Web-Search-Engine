@@ -65,6 +65,8 @@ public class SearchIndex {
 							int docId = hits[i].doc;
 							Document doc = searcher.doc(docId);
 							String filepath = doc.get("path");
+							File file = new File(filepath);
+							String filename = file.getName();
 							String text = doc.get("contents");
 							TokenStream stream = TokenSources.getAnyTokenStream(reader, docId, "contents", analyzer);
 							String[] frags = highlighter.getBestFragments(stream, text, 10);
@@ -73,7 +75,7 @@ public class SearchIndex {
 //									+ doc.get("lastmodified") + "\nRelevance Score: " + hits[i].score);
 
 							stringArray.add(Integer.toString(i+1));
-							stringArray.add(filepath);
+							stringArray.add(filename);
 //							System.out.println("filePath: " + filepath);
 							stringArray.add(doc.get("lastmodified"));
 							stringArray.add(Float.toString(hits[i].score));
