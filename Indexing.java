@@ -19,11 +19,8 @@ import java.text.SimpleDateFormat;
 
 public class Indexing {
 	public static boolean indexing(String inputPath, String indexPath) {
-//		System.out.println("Before path");
 		boolean flag = true;
 		final Path dataDir = Paths.get(inputPath);
-//		System.out.println("path:"+dataDir.toString());
-		Date start = new Date();
 		try {
 			Directory index = FSDirectory.open(Paths.get(indexPath));
 			Analyzer analyzer = new EnglishAnalyzer();
@@ -36,13 +33,11 @@ public class Indexing {
 			indexWriter.close();
 
 			Date end = new Date();
-//			System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 		} catch (IOException e) {
 			flag = false;
 			System.out.println("Error in Indexing Class");
 			System.out.println("Error in Search Query");
-			// e.printStackTrace();
-			 System.out.println(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 		return flag; 
 	}
@@ -60,7 +55,7 @@ public class Indexing {
 							// don't index files that can't be read.
 						}
 					} else {
-						System.out.println("This type of file will not be indexed" + file.toString());
+//						System.out.println("This type of file will not be indexed" + file.toString());
 					}
 					return FileVisitResult.CONTINUE;
 				}
@@ -83,7 +78,6 @@ public class Indexing {
 				doc.add(new StringField("lastmodified", lastMod, Field.Store.YES));
 				doc.add(new TextField("contents", new String(Files.readAllBytes(dataDir)) , Store.YES));
 
-//				System.out.println("adding " + dataDir);
 				writer.addDocument(doc);
 			} catch (Exception e) {
 				System.out.println("Error in Indexing Class - in indexDocument module");

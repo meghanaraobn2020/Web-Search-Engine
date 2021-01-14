@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -34,12 +33,9 @@ public class MainWindow {
         	        JOptionPane.ERROR_MESSAGE);
         }else {
         	JFrame frame = new JFrame();
-        	//final int FRAME_WIDTH  = 1000;
-            //final int FRAME_HEIGHT = 1000;
 
             frame.setSize(1000,900);
-            //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            
+
             frame.setTitle("Search Engine - The Strings");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLayout(new BorderLayout());

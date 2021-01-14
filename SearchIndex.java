@@ -56,8 +56,6 @@ public class SearchIndex {
 
 					if (hits != null && hits.length > 0) {
 
-//						System.out.println("Total " + hits.length + " documents found");
-//						System.out.println("______________Top " + hits.length + " Relevant Documents______________ ");
 
 						for (int i = 0; i < hits.length; ++i) {
 							ArrayList<String> fragArray = new ArrayList<String>();
@@ -71,19 +69,14 @@ public class SearchIndex {
 							TokenStream stream = TokenSources.getAnyTokenStream(reader, docId, "contents", analyzer);
 							String[] frags = highlighter.getBestFragments(stream, text, 10);
 
-//							System.out.println("\nRank: " + (i + 1) + "\nPath: " + filepath + " \nLast Modified: "
-//									+ doc.get("lastmodified") + "\nRelevance Score: " + hits[i].score);
 
 							stringArray.add(Integer.toString(i+1));
 							stringArray.add(filename.substring(0, filename.length()-4));
-//							System.out.println("filePath: " + filepath);
 							stringArray.add(doc.get("lastmodified"));
 							stringArray.add(Float.toString(hits[i].score));
 
 							for (String frag : frags)
 							{
-//								System.out.println("=======================");
-//								System.out.println(frag);
 								fragArray.add(frag);
 							}
 
@@ -98,27 +91,23 @@ public class SearchIndex {
 							//---
 							dictionary.put(i, stringArray);
 						}
-					} else
-						System.out.println("No results found\n");
-//					System.out.println("______________________________________________________\n\n");
+					}
 				}
 				catch (Exception e) {
 					System.out.println("Wrong Input");
 				}
 			} else {
-				System.out.println("Wrong Input\n");
+//				System.out.println("Wrong Input\n");
 			}
 
 		} catch (Exception e) {
 			System.out.println("Error in Search Index Class");
 			e.printStackTrace();
 		}
-		System.out.println("end search");
 		return dictionary;
 	}
 
 	public static String getImage(String pathFile) {
-//		System.out.println("GetImage method");
 		String imagePath = "";
 		try {
 			File fileInfo  = new File (pathFile);
