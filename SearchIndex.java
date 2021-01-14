@@ -75,7 +75,7 @@ public class SearchIndex {
 //									+ doc.get("lastmodified") + "\nRelevance Score: " + hits[i].score);
 
 							stringArray.add(Integer.toString(i+1));
-							stringArray.add(filename);
+							stringArray.add(filename.substring(0, filename.length()-4));
 //							System.out.println("filePath: " + filepath);
 							stringArray.add(doc.get("lastmodified"));
 							stringArray.add(Float.toString(hits[i].score));
