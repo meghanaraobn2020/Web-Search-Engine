@@ -1,5 +1,5 @@
 # Web Search Engine
-- Objective : Design own web search engine
+- Objective : Design web search engine
 - Dataset : 1000 topics from Wikipedia dataset
 - Language : Java 8
 - Backend : Apache Lucene 7.4
